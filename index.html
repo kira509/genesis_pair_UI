@@ -1,16 +1,19 @@
-<!-- index.html / futuristic interactive Genesis Pair Page -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Genesis Pair Portal</title>
-  <!-- Tailwind CSS CDN -->
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Orbitron font for sci‑fi look -->
+
+  <!-- Orbitron Font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  <!-- Heroicons for clipboard / check icons -->
+
+  <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
+
   <style>
     body {
       font-family: 'Orbitron', sans-serif;
@@ -25,7 +28,6 @@
       box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
       backdrop-filter: blur(8px);
     }
-    /* Ripple effect */
     .btn-ripple {
       position: relative;
       overflow: hidden;
@@ -45,12 +47,10 @@
       transform: scale(1);
       transition: 0s;
     }
-    /* Neon focus */
     .neon-input:focus {
       outline: none;
       box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
     }
-    /* Fade */
     .fade-in {
       animation: fade 1s ease forwards;
       opacity: 0;
@@ -61,31 +61,28 @@
 <body>
   <!-- Loading spinner -->
   <div id="spinner" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
-     <svg class="w-16 h-16 animate-spin text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-       <circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"></circle>
-       <path class="opacity-75" d="M4 12a8 8 0 018-8v4l3-3-3-3v4A8 8 0 104 12z" stroke-width="4"></path>
-     </svg>
+    <svg class="w-16 h-16 animate-spin text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"></circle>
+      <path class="opacity-75" d="M4 12a8 8 0 018-8v4l3-3-3-3v4A8 8 0 104 12z" stroke-width="4"></path>
+    </svg>
   </div>
 
   <div class="glass rounded-3xl p-8 w-[90%] max-w-md text-white fade-in">
     <h1 class="text-3xl font-bold text-cyan-400 mb-4 drop-shadow-lg">GENESIS TECH</h1>
 
-    <!-- Phone input -->
     <input id="numberInput" type="text" placeholder="WhatsApp Number" maxlength="15"
-       class="neon-input w-full bg-white/10 placeholder-gray-400 text-center py-3 px-4 rounded-lg mb-6" />
+      class="neon-input w-full bg-white/10 placeholder-gray-400 text-center py-3 px-4 rounded-lg mb-6" />
 
-    <!-- Pair button & repo link -->
     <button id="pairBtn" class="btn-ripple w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-lg transition-all mb-4 flex items-center justify-center gap-2">
       <span>Generate Pair Code</span>
       <i data-feather="zap"></i>
     </button>
 
-   <a href="https://github.com/kira509/genesis_pair_UI" target="_blank"
-       class="btn-ripple block w-full text-center bg-blue-500 hover:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-all">
-       View Bot Repo
+    <a href="https://github.com/kira509/genesis_pair_UI" target="_blank"
+      class="btn-ripple block w-full text-center bg-blue-500 hover:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-all">
+      View Bot Repo
     </a>
 
-    <!-- Output -->
     <div id="resultBox" class="mt-6 hidden">
       <p class="text-sm text-gray-300">Pair Code</p>
       <div id="pairCode"
@@ -96,7 +93,6 @@
       <p id="copied" class="text-xs text-green-400 mt-2 hidden">Copied!</p>
     </div>
 
-    <!-- Deploy badge -->
     <div class="mt-8 text-xs text-gray-400">Made with 💙 by <span class="text-cyan-300">Genesis</span></div>
   </div>
 
@@ -119,37 +115,39 @@
         return;
       }
 
-      // show spinner for cool effect
+      // Show spinner effect
       spinner.classList.remove('hidden');
+
       setTimeout(() => {
         spinner.classList.add('hidden');
+
         const code = `${genPart()}-${genPart()}`;
         pairCodeEl.textContent = code;
         resultBox.classList.remove('hidden');
         feather.replace();
+
+        // Send to backend
+        fetch('https://genesis-pair-backend.onrender.com/api/paircode', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ number: phone, code: code })
+        }).then(res => {
+          if (!res.ok) throw new Error('Failed to save code');
+          console.log('✅ Code saved to MongoDB');
+        }).catch(err => {
+          console.error('❌ Backend error:', err);
+        });
       }, 1200);
     });
-      // Send to backend
-  fetch('https://genesis-pair-backend.onrender.com/api/pair', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ number: phone, code: code })
-  }).then(res => {
-    if (!res.ok) throw new Error('Failed to save code')
-    console.log('✅ Code saved')
-  }).catch(err => {
-    console.error('❌ Failed to send to backend', err)
-  })
 
-    // Copy to clipboard + feedback
     document.getElementById('pairCode').addEventListener('click', () => {
       const text = pairCodeEl.textContent;
       navigator.clipboard.writeText(text).then(() => {
         copiedMsg.classList.remove('hidden');
         setTimeout(() => copiedMsg.classList.add('hidden'), 2000);
-      })
+      });
     });
   </script>
 </body>
