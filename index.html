@@ -3,141 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Genflix 🔥</title>
-
-  <!-- Tailwind CSS CDN -->
+  <title>MovieFlix Admin Upload</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Orbitron font -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/feather-icons"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Orbitron', sans-serif;
-      background: radial-gradient(ellipse at top, #0f0f0f, #000);
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: linear-gradient(to right, #000000, #0f0f0f, #1a1a1a);
+      color: white;
     }
     .glass {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      border-radius: 1rem;
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-    }
-    .neon-input:focus {
-      outline: none;
-      box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
-    }
-    .active-tab {
-      color: #00ffff;
-      border-bottom: 2px solid #00ffff;
+      background: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+      backdrop-filter: blur(6px);
     }
   </style>
 </head>
-
-<body>
-  <div class="glass p-8 w-full max-w-md mx-auto">
-    <!-- Navigation Tabs -->
-    <div class="flex justify-center mb-6 gap-6 text-sm sm:text-base">
-      <button onclick="showTab('register')" id="tab-register" class="hover:text-cyan-400">Register</button>
-      <button onclick="showTab('login')" id="tab-login" class="hover:text-cyan-400">Login</button>
-      <button onclick="showTab('home')" id="tab-home" class="hover:text-cyan-400">Home</button>
-    </div>
-
-    <!-- Register Form -->
-    <div id="register" class="tab">
-      <h2 class="text-2xl text-cyan-400 font-bold mb-4">Register for MovieFlix</h2>
-      <input id="reg-username" type="text" placeholder="Username" class="neon-input mb-3 w-full p-3 rounded bg-white/10 text-white" required />
-      <input id="reg-email" type="email" placeholder="Email" class="neon-input mb-3 w-full p-3 rounded bg-white/10 text-white" required />
-      <input id="reg-password" type="password" placeholder="Password" class="neon-input mb-4 w-full p-3 rounded bg-white/10 text-white" required />
-      <button onclick="register()" class="bg-cyan-500 hover:bg-cyan-400 w-full py-3 rounded font-bold text-black">Register</button>
-      <p id="reg-msg" class="mt-2 text-sm text-green-400 hidden">Registered successfully! You can now log in.</p>
-    </div>
-
-    <!-- Login Form -->
-    <div id="login" class="tab hidden">
-      <h2 class="text-2xl text-cyan-400 font-bold mb-4">Login to MovieFlix</h2>
-      <input id="login-email" type="email" placeholder="Email" class="neon-input mb-3 w-full p-3 rounded bg-white/10 text-white" required />
-      <input id="login-password" type="password" placeholder="Password" class="neon-input mb-4 w-full p-3 rounded bg-white/10 text-white" required />
-      <button onclick="login()" class="bg-cyan-500 hover:bg-cyan-400 w-full py-3 rounded font-bold text-black">Login</button>
-      <p id="login-error" class="mt-2 text-sm text-red-400 hidden">Login failed. Check credentials.</p>
-    </div>
-
-    <!-- Home (Movies) -->
-    <div id="home" class="tab hidden">
-      <h2 class="text-2xl font-bold text-cyan-400 mb-4">🔥 Featured Movies</h2>
-      <div id="movie-grid" class="grid grid-cols-2 gap-3 text-sm"></div>
-    </div>
+<body class="flex items-center justify-center min-h-screen">
+  <div class="glass p-8 rounded-xl w-[90%] max-w-xl">
+    <h1 class="text-3xl mb-6 text-cyan-400 text-center">🎬 Upload Movie</h1>
+    <form id="uploadForm" class="space-y-4">
+      <input type="text" id="title" placeholder="Movie Title" required class="w-full p-3 rounded bg-zinc-900 border border-cyan-600"/>
+      <input type="text" id="category" placeholder="Category" required class="w-full p-3 rounded bg-zinc-900 border border-cyan-600"/>
+      <input type="url" id="thumbnail" placeholder="Thumbnail URL" required class="w-full p-3 rounded bg-zinc-900 border border-cyan-600"/>
+      <input type="url" id="videoUrl" placeholder="Video URL" required class="w-full p-3 rounded bg-zinc-900 border border-cyan-600"/>
+      <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-lg transition-all">Upload Movie</button>
+    </form>
+    <p id="message" class="text-sm mt-4 text-center"></p>
   </div>
 
   <script>
-    const API = "https://movieflix-backend-ikbt.onrender.com/api";
+    const form = document.getElementById("uploadForm");
+    const message = document.getElementById("message");
 
-    function showTab(tab) {
-      document.querySelectorAll('.tab').forEach(el => el.classList.add('hidden'));
-      document.getElementById(tab).classList.remove('hidden');
-      document.querySelectorAll('button').forEach(b => b.classList.remove('active-tab'));
-      document.getElementById('tab-' + tab).classList.add('active-tab');
-      if (tab === 'home') loadMovies();
-    }
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = {
+        title: form.title.value.trim(),
+        category: form.category.value.trim(),
+        thumbnail: form.thumbnail.value.trim(),
+        videoUrl: form.videoUrl.value.trim()
+      };
 
-    function register() {
-      const username = document.getElementById('reg-username').value;
-      const email = document.getElementById('reg-email').value;
-      const password = document.getElementById('reg-password').value;
-      fetch(`${API}/auth/register`, {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ username, email, password })
-      }).then(res => res.json())
-        .then(data => {
-          document.getElementById('reg-msg').classList.remove('hidden');
-        }).catch(() => alert('Registration failed'));
-    }
-
-    function login() {
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      fetch(`${API}/login`, {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ email, password })
-      }).then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      }).then(data => {
-        localStorage.setItem("token", data.token);
-        showTab("home");
-      }).catch(() => {
-        document.getElementById('login-error').classList.remove('hidden');
-      });
-    }
-
-    function loadMovies() {
-      fetch(`${API}/movies`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      })
-        .then(res => res.json())
-        .then(data => {
-          const grid = document.getElementById("movie-grid");
-          grid.innerHTML = "";
-          data.forEach(movie => {
-            grid.innerHTML += `
-              <div class="bg-white/10 rounded p-2 text-white">
-                <img src="${movie.thumbnail || 'https://via.placeholder.com/300x160'}" class="rounded w-full h-32 object-cover mb-2"/>
-                <h3 class="font-semibold">${movie.title}</h3>
-                <p class="text-xs text-gray-300">${movie.category}</p>
-              </div>`;
-          });
+      try {
+        const res = await fetch("https://movieflix-backend-ikbt.onrender.com/api/movies", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token") || ""}`
+          },
+          body: JSON.stringify(data)
         });
-    }
+
+        if (!res.ok) throw new Error("Upload failed");
+        message.textContent = "✅ Movie uploaded successfully!";
+        message.className = "text-green-400";
+        form.reset();
+      } catch (err) {
+        message.textContent = "❌ Failed to upload. Make sure you're logged in.";
+        message.className = "text-red-400";
+      }
+    });
   </script>
 </body>
 </html>
