@@ -3,67 +3,160 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MovieFlix Admin Upload</title>
+  <title>🎬 MovieFlix Portal</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
   <style>
     body {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(to right, #000000, #0f0f0f, #1a1a1a);
-      color: white;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle, #111 0%, #000 100%);
+      color: #fff;
+      min-height: 100vh;
     }
     .glass {
-      background: rgba(0, 0, 0, 0.7);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-      backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .input {
+      @apply bg-zinc-800 text-white w-full p-3 rounded mb-4 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-cyan-500;
+    }
+    .btn {
+      @apply w-full bg-cyan-500 hover:bg-cyan-400 text-black font-semibold py-3 rounded transition-all;
     }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen">
-  <div class="glass p-8 rounded-xl w-[90%] max-w-xl">
-    <h1 class="text-3xl mb-6 text-cyan-400 text-center">🎬 Upload Movie</h1>
-    <form id="uploadForm" class="space-y-4">
-      <input type="text" id="title" placeholder="Movie Title" required class="w-full p-3 rounded bg-zinc-900 border border-cyan-600"/>
-      <input type="text" id="category" placeholder="Category" required class="w-full p-3 rounded bg-zinc-900 border border-cyan-600"/>
-      <input type="url" id="thumbnail" placeholder="Thumbnail URL" required class="w-full p-3 rounded bg-zinc-900 border border-cyan-600"/>
-      <input type="url" id="videoUrl" placeholder="Video URL" required class="w-full p-3 rounded bg-zinc-900 border border-cyan-600"/>
-      <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-lg transition-all">Upload Movie</button>
-    </form>
-    <p id="message" class="text-sm mt-4 text-center"></p>
+<body class="flex items-center justify-center p-4">
+
+  <div class="w-full max-w-md glass p-6 rounded-xl shadow-lg">
+    <h1 class="text-3xl font-bold text-center mb-6 text-cyan-400">🎬 MovieFlix</h1>
+
+    <!-- Tabs -->
+    <div class="flex justify-center gap-4 mb-6 text-sm">
+      <button onclick="showSection('register')" class="hover:text-cyan-400">Register</button>
+      <button onclick="showSection('login')" class="hover:text-cyan-400">Login</button>
+      <button onclick="showSection('upload')" class="hover:text-cyan-400">Upload</button>
+    </div>
+
+    <!-- Register Section -->
+    <div id="register-section">
+      <h2 class="text-xl font-semibold mb-4">Register</h2>
+      <input id="reg-username" type="text" placeholder="Username" class="input" />
+      <input id="reg-email" type="email" placeholder="Email" class="input" />
+      <input id="reg-password" type="password" placeholder="Password" class="input" />
+      <button onclick="register()" class="btn">Register</button>
+      <p id="reg-msg" class="text-sm mt-2 text-center"></p>
+    </div>
+
+    <!-- Login Section -->
+    <div id="login-section" class="hidden">
+      <h2 class="text-xl font-semibold mb-4">Login</h2>
+      <input id="log-email" type="email" placeholder="Email" class="input" />
+      <input id="log-password" type="password" placeholder="Password" class="input" />
+      <button onclick="login()" class="btn">Login</button>
+      <p id="log-msg" class="text-sm mt-2 text-center"></p>
+    </div>
+
+    <!-- Upload Section -->
+    <div id="upload-section" class="hidden">
+      <h2 class="text-xl font-semibold mb-4">Upload Movie</h2>
+      <input id="movie-title" type="text" placeholder="Movie Title" class="input" />
+      <input id="movie-category" type="text" placeholder="Category" class="input" />
+      <input id="movie-thumbnail" type="text" placeholder="Thumbnail URL" class="input" />
+      <button onclick="uploadMovie()" class="btn">Upload</button>
+      <p id="upload-msg" class="text-sm mt-2 text-center"></p>
+    </div>
   </div>
 
   <script>
-    const form = document.getElementById("uploadForm");
-    const message = document.getElementById("message");
+    const API = "https://movieflix-backend-ikbt.onrender.com/api";
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const data = {
-        title: form.title.value.trim(),
-        category: form.category.value.trim(),
-        thumbnail: form.thumbnail.value.trim(),
-        videoUrl: form.videoUrl.value.trim()
-      };
+    function showSection(section) {
+      document.getElementById("register-section").classList.add("hidden");
+      document.getElementById("login-section").classList.add("hidden");
+      document.getElementById("upload-section").classList.add("hidden");
+      document.getElementById(`${section}-section`).classList.remove("hidden");
+    }
 
-      try {
-        const res = await fetch("https://movieflix-backend-ikbt.onrender.com/api/movies", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token") || ""}`
-          },
-          body: JSON.stringify(data)
-        });
+    function register() {
+      const username = document.getElementById("reg-username").value;
+      const email = document.getElementById("reg-email").value;
+      const password = document.getElementById("reg-password").value;
 
-        if (!res.ok) throw new Error("Upload failed");
-        message.textContent = "✅ Movie uploaded successfully!";
-        message.className = "text-green-400";
-        form.reset();
-      } catch (err) {
-        message.textContent = "❌ Failed to upload. Make sure you're logged in.";
-        message.className = "text-red-400";
+      fetch(`${API}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("reg-msg").textContent = data.message || "✅ Registered successfully!";
+        showSection("login");
+      })
+      .catch(err => {
+        document.getElementById("reg-msg").textContent = "❌ Registration failed.";
+      });
+    }
+
+    function login() {
+      const email = document.getElementById("log-email").value;
+      const password = document.getElementById("log-password").value;
+
+      fetch(`${API}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          document.getElementById("log-msg").textContent = "✅ Logged in!";
+          showSection("upload");
+        } else {
+          throw new Error("Login failed");
+        }
+      })
+      .catch(() => {
+        document.getElementById("log-msg").textContent = "❌ Login failed. Check credentials.";
+      });
+    }
+
+    function uploadMovie() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        document.getElementById("upload-msg").textContent = "❌ Login required!";
+        return;
       }
-    });
+
+      const title = document.getElementById("movie-title").value;
+      const category = document.getElementById("movie-category").value;
+      const thumbnail = document.getElementById("movie-thumbnail").value;
+
+      fetch(`${API}/movies`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title, category, thumbnail }),
+      })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById("upload-msg").textContent = "✅ Movie uploaded!";
+      })
+      .catch(() => {
+        document.getElementById("upload-msg").textContent = "❌ Failed to upload movie.";
+      });
+    }
   </script>
 </body>
 </html>
