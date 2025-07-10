@@ -3,73 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🎬 MovieFlix Portal</title>
-
-  <!-- Tailwind CSS -->
+  <title>MovieFlix Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      background: radial-gradient(circle, #111 0%, #000 100%);
-      color: #fff;
-      min-height: 100vh;
+      font-family: 'Orbitron', sans-serif;
+      background: url('https://images.unsplash.com/photo-1604948501466-6c3cd8de0a2b?auto=format&fit=crop&w=1950&q=80') no-repeat center/cover;
+      height: 100vh;
+      margin: 0;
     }
     .glass {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(0, 0, 0, 0.55);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .input {
-      @apply bg-zinc-800 text-white w-full p-3 rounded mb-4 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-cyan-500;
     }
     .btn {
-      @apply w-full bg-cyan-500 hover:bg-cyan-400 text-black font-semibold py-3 rounded transition-all;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+    .btn:hover {
+      transform: scale(1.03);
+    }
+    .input {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
     }
   </style>
 </head>
 <body class="flex items-center justify-center p-4">
 
-  <div class="w-full max-w-md glass p-6 rounded-xl shadow-lg">
-    <h1 class="text-3xl font-bold text-center mb-6 text-cyan-400">🎬 MovieFlix</h1>
+  <div class="glass max-w-lg w-full p-8 rounded-2xl text-white space-y-6">
+    <h1 class="text-3xl font-bold text-cyan-400 text-center drop-shadow-lg">🎬 MovieFlix Portal</h1>
 
-    <!-- Tabs -->
-    <div class="flex justify-center gap-4 mb-6 text-sm">
-      <button onclick="showSection('register')" class="hover:text-cyan-400">Register</button>
-      <button onclick="showSection('login')" class="hover:text-cyan-400">Login</button>
-      <button onclick="showSection('upload')" class="hover:text-cyan-400">Upload</button>
+    <!-- Navigation Buttons -->
+    <div class="flex justify-center gap-4">
+      <button onclick="showSection('register')" class="btn bg-blue-500 px-4 py-2 rounded text-white font-semibold">Register</button>
+      <button onclick="showSection('login')" class="btn bg-green-500 px-4 py-2 rounded text-white font-semibold">Login</button>
+      <button onclick="showSection('upload')" class="btn bg-purple-600 px-4 py-2 rounded text-white font-semibold">Upload</button>
     </div>
 
     <!-- Register Section -->
-    <div id="register-section">
-      <h2 class="text-xl font-semibold mb-4">Register</h2>
-      <input id="reg-username" type="text" placeholder="Username" class="input" />
-      <input id="reg-email" type="email" placeholder="Email" class="input" />
-      <input id="reg-password" type="password" placeholder="Password" class="input" />
-      <button onclick="register()" class="btn">Register</button>
-      <p id="reg-msg" class="text-sm mt-2 text-center"></p>
+    <div id="register-section" class="space-y-4 hidden">
+      <h2 class="text-xl font-bold">Register for MovieFlix</h2>
+      <input id="reg-username" type="text" placeholder="Username" class="input w-full px-3 py-2 rounded" />
+      <input id="reg-email" type="text" placeholder="Email" class="input w-full px-3 py-2 rounded" />
+      <input id="reg-password" type="text" placeholder="Password" class="input w-full px-3 py-2 rounded" />
+      <button onclick="register()" class="btn bg-blue-600 w-full py-2 rounded font-bold text-white">Register</button>
+      <p id="reg-msg" class="text-sm mt-1"></p>
     </div>
 
     <!-- Login Section -->
-    <div id="login-section" class="hidden">
-      <h2 class="text-xl font-semibold mb-4">Login</h2>
-      <input id="log-email" type="email" placeholder="Email" class="input" />
-      <input id="log-password" type="password" placeholder="Password" class="input" />
-      <button onclick="login()" class="btn">Login</button>
-      <p id="log-msg" class="text-sm mt-2 text-center"></p>
+    <div id="login-section" class="space-y-4 hidden">
+      <h2 class="text-xl font-bold">Login to MovieFlix</h2>
+      <input id="log-email" type="text" placeholder="Email" class="input w-full px-3 py-2 rounded" />
+      <input id="log-password" type="text" placeholder="Password" class="input w-full px-3 py-2 rounded" />
+      <button onclick="login()" class="btn bg-green-600 w-full py-2 rounded font-bold text-white">Login</button>
+      <p id="log-msg" class="text-sm mt-1"></p>
     </div>
 
-    <!-- Upload Section -->
-    <div id="upload-section" class="hidden">
-      <h2 class="text-xl font-semibold mb-4">Upload Movie</h2>
-      <input id="movie-title" type="text" placeholder="Movie Title" class="input" />
-      <input id="movie-category" type="text" placeholder="Category" class="input" />
-      <input id="movie-thumbnail" type="text" placeholder="Thumbnail URL" class="input" />
-      <button onclick="uploadMovie()" class="btn">Upload</button>
-      <p id="upload-msg" class="text-sm mt-2 text-center"></p>
+    <!-- Upload Movie Section -->
+    <div id="upload-section" class="space-y-4 hidden">
+      <h2 class="text-xl font-bold">Upload a Movie</h2>
+      <input id="movie-title" type="text" placeholder="Movie Title" class="input w-full px-3 py-2 rounded" />
+      <input id="movie-category" type="text" placeholder="Category" class="input w-full px-3 py-2 rounded" />
+      <input id="movie-thumb" type="text" placeholder="Thumbnail URL (optional)" class="input w-full px-3 py-2 rounded" />
+      <button onclick="uploadMovie()" class="btn bg-purple-700 w-full py-2 rounded font-bold text-white">Upload</button>
+      <p id="upload-msg" class="text-sm mt-1"></p>
     </div>
   </div>
 
@@ -77,91 +77,112 @@
     const API = "https://movieflix-backend-ikbt.onrender.com/api";
 
     function showSection(section) {
-      document.getElementById("register-section").classList.add("hidden");
-      document.getElementById("login-section").classList.add("hidden");
-      document.getElementById("upload-section").classList.add("hidden");
-      document.getElementById(`${section}-section`).classList.remove("hidden");
+      document.getElementById("register-section").style.display = "none";
+      document.getElementById("login-section").style.display = "none";
+      document.getElementById("upload-section").style.display = "none";
+      document.getElementById(`${section}-section`).style.display = "block";
     }
 
-    function register() {
+    async function register() {
       const username = document.getElementById("reg-username").value;
       const email = document.getElementById("reg-email").value;
       const password = document.getElementById("reg-password").value;
+      const msg = document.getElementById("reg-msg");
+      msg.textContent = "⏳ Registering...";
 
-      fetch(`${API}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("reg-msg").textContent = data.message || "✅ Registered successfully!";
-        showSection("login");
-      })
-      .catch(err => {
-        document.getElementById("reg-msg").textContent = "❌ Registration failed.";
-      });
+      try {
+        const res = await fetch(`${API}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = "✅ Registration successful!";
+          msg.className = "text-green-400";
+        } else {
+          msg.textContent = `❌ ${data.message || "Failed"}`;
+          msg.className = "text-red-400";
+        }
+      } catch (e) {
+        msg.textContent = "❌ Error connecting to server.";
+        msg.className = "text-red-400";
+      }
     }
 
-    function login() {
+    async function login() {
       const email = document.getElementById("log-email").value;
       const password = document.getElementById("log-password").value;
+      const msg = document.getElementById("log-msg");
+      msg.textContent = "⏳ Logging in...";
+      msg.className = "";
 
-      fetch(`${API}/login`, {
-      function login() {
-  const email = document.getElementById("log-email").value;
-  const password = document.getElementById("log-password").value;
+      const endpoints = ["/auth/login", "/login", "/api/login"];
+      let data, ok = false;
 
-  fetch(`${API}/auth/login`, {  // <- FIXED HERE
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      document.getElementById("log-msg").textContent = "✅ Logged in!";
-      showSection("upload");
-    } else {
-      throw new Error("Login failed");
-    }
-  })
-  .catch(() => {
-    document.getElementById("log-msg").textContent = "❌ Login failed. Check credentials.";
-  });
-    }
-
-    function uploadMovie() {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        document.getElementById("upload-msg").textContent = "❌ Login required!";
-        return;
+      for (let ep of endpoints) {
+        try {
+          const res = await fetch(API + ep, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+          });
+          data = await res.json();
+          if (res.ok && data.token) {
+            ok = true;
+            break;
+          }
+        } catch (e) {
+          console.error("Login error:", e);
+        }
       }
 
+      if (ok) {
+        localStorage.setItem("token", data.token);
+        msg.textContent = "✅ Logged in!";
+        msg.className = "text-green-400";
+        showSection("upload");
+      } else {
+        msg.textContent = data?.message || "❌ Login failed.";
+        msg.className = "text-red-400";
+      }
+    }
+
+    async function uploadMovie() {
       const title = document.getElementById("movie-title").value;
       const category = document.getElementById("movie-category").value;
-      const thumbnail = document.getElementById("movie-thumbnail").value;
+      const thumbnail = document.getElementById("movie-thumb").value;
+      const token = localStorage.getItem("token");
+      const msg = document.getElementById("upload-msg");
 
-      fetch(`${API}/movies`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title, category, thumbnail }),
-      })
-      .then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then(data => {
-        document.getElementById("upload-msg").textContent = "✅ Movie uploaded!";
-      })
-      .catch(() => {
-        document.getElementById("upload-msg").textContent = "❌ Failed to upload movie.";
-      });
+      msg.textContent = "⏳ Uploading...";
+      try {
+        const res = await fetch(`${API}/movies`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ title, category, thumbnail })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = "✅ Movie uploaded!";
+          msg.className = "text-green-400";
+        } else {
+          msg.textContent = `❌ ${data.message || "Failed to upload"}`;
+          msg.className = "text-red-400";
+        }
+      } catch (e) {
+        msg.textContent = "❌ Upload error.";
+        msg.className = "text-red-400";
+      }
     }
+
+    // Show register form by default
+    showSection("register");
   </script>
 </body>
 </html>
