@@ -2,170 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MovieFlix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MovieFlix 🔥</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Orbitron Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
+  <!-- Orbitron font -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/feather-icons"></script>
 
   <style>
     body {
       font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(to bottom right, #000000, #111111);
-      color: white;
+      background: radial-gradient(ellipse at top, #0f0f0f, #000);
+      color: #fff;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
     }
     .glass {
-      background: rgba(0, 0, 0, 0.65);
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 1rem;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
       backdrop-filter: blur(10px);
     }
-    .hidden { display: none; }
+    .neon-input:focus {
+      outline: none;
+      box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    }
+    .active-tab {
+      color: #00ffff;
+      border-bottom: 2px solid #00ffff;
+    }
   </style>
 </head>
+
 <body>
-  <div class="w-full max-w-md p-6 glass rounded-2xl">
-    <!-- Navigation -->
-    <div class="flex justify-between mb-6">
-      <button onclick="showSection('register')" class="text-cyan-400 hover:underline">Register</button>
-      <button onclick="showSection('login')" class="text-cyan-400 hover:underline">Login</button>
-      <button onclick="showSection('home')" class="text-cyan-400 hover:underline">Home</button>
+  <div class="glass p-8 w-full max-w-md mx-auto">
+    <!-- Navigation Tabs -->
+    <div class="flex justify-center mb-6 gap-6 text-sm sm:text-base">
+      <button onclick="showTab('register')" id="tab-register" class="hover:text-cyan-400">Register</button>
+      <button onclick="showTab('login')" id="tab-login" class="hover:text-cyan-400">Login</button>
+      <button onclick="showTab('home')" id="tab-home" class="hover:text-cyan-400">Home</button>
     </div>
 
-    <!-- Register -->
-    <div id="registerSection">
-      <h1 class="text-2xl font-bold mb-4">Register for MovieFlix</h1>
-      <input id="reg_username" type="text" placeholder="Username" class="input" />
-      <input id="reg_email" type="email" placeholder="Email" class="input" />
-      <input id="reg_password" type="password" placeholder="Password" class="input" />
-      <button onclick="register()" class="btn w-full mt-3">Register</button>
-      <p id="registerMessage" class="text-sm mt-2"></p>
+    <!-- Register Form -->
+    <div id="register" class="tab">
+      <h2 class="text-2xl text-cyan-400 font-bold mb-4">Register for MovieFlix</h2>
+      <input id="reg-username" type="text" placeholder="Username" class="neon-input mb-3 w-full p-3 rounded bg-white/10 text-white" required />
+      <input id="reg-email" type="email" placeholder="Email" class="neon-input mb-3 w-full p-3 rounded bg-white/10 text-white" required />
+      <input id="reg-password" type="password" placeholder="Password" class="neon-input mb-4 w-full p-3 rounded bg-white/10 text-white" required />
+      <button onclick="register()" class="bg-cyan-500 hover:bg-cyan-400 w-full py-3 rounded font-bold text-black">Register</button>
+      <p id="reg-msg" class="mt-2 text-sm text-green-400 hidden">Registered successfully! You can now log in.</p>
     </div>
 
-    <!-- Login -->
-    <div id="loginSection" class="hidden">
-      <h1 class="text-2xl font-bold mb-4">Login to MovieFlix</h1>
-      <input id="login_email" type="email" placeholder="Email" class="input" />
-      <input id="login_password" type="password" placeholder="Password" class="input" />
-      <button onclick="login()" class="btn w-full mt-3">Login</button>
-      <p id="loginMessage" class="text-sm mt-2"></p>
+    <!-- Login Form -->
+    <div id="login" class="tab hidden">
+      <h2 class="text-2xl text-cyan-400 font-bold mb-4">Login to MovieFlix</h2>
+      <input id="login-email" type="email" placeholder="Email" class="neon-input mb-3 w-full p-3 rounded bg-white/10 text-white" required />
+      <input id="login-password" type="password" placeholder="Password" class="neon-input mb-4 w-full p-3 rounded bg-white/10 text-white" required />
+      <button onclick="login()" class="bg-cyan-500 hover:bg-cyan-400 w-full py-3 rounded font-bold text-black">Login</button>
+      <p id="login-error" class="mt-2 text-sm text-red-400 hidden">Login failed. Check credentials.</p>
     </div>
 
-    <!-- Home -->
-    <div id="homeSection" class="hidden">
-      <h1 class="text-2xl font-bold mb-4">🔥 Featured Movies</h1>
-      <div id="movieGrid" class="grid grid-cols-2 gap-4"></div>
+    <!-- Home (Movies) -->
+    <div id="home" class="tab hidden">
+      <h2 class="text-2xl font-bold text-cyan-400 mb-4">🔥 Featured Movies</h2>
+      <div id="movie-grid" class="grid grid-cols-2 gap-3 text-sm"></div>
     </div>
   </div>
 
   <script>
-    const API = "https://movieflix-backend-ikbt.onrender.com/api"
+    const API = "https://movieflix-backend-ikbt.onrender.com/api";
 
-    function showSection(section) {
-      document.getElementById('registerSection').classList.add('hidden')
-      document.getElementById('loginSection').classList.add('hidden')
-      document.getElementById('homeSection').classList.add('hidden')
-      document.getElementById(`${section}Section`).classList.remove('hidden')
+    function showTab(tab) {
+      document.querySelectorAll('.tab').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tab).classList.remove('hidden');
+      document.querySelectorAll('button').forEach(b => b.classList.remove('active-tab'));
+      document.getElementById('tab-' + tab).classList.add('active-tab');
+      if (tab === 'home') loadMovies();
     }
 
-    async function register() {
-      const username = document.getElementById('reg_username').value
-      const email = document.getElementById('reg_email').value
-      const password = document.getElementById('reg_password').value
+    function register() {
+      const username = document.getElementById('reg-username').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      fetch(`${API}/auth/register`, {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, email, password })
+      }).then(res => res.json())
+        .then(data => {
+          document.getElementById('reg-msg').classList.remove('hidden');
+        }).catch(() => alert('Registration failed'));
+    }
 
-      try {
-        const res = await fetch(`${API}/auth/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password })
-        })
-        const data = await res.json()
-        if (res.ok) {
-          document.getElementById('registerMessage').textContent = "✅ Registration successful! Now you can log in."
-          showSection('login')
-        } else {
-          document.getElementById('registerMessage').textContent = data.message || "Registration failed."
+    function login() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      fetch(`${API}/login`, {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password })
+      }).then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      }).then(data => {
+        localStorage.setItem("token", data.token);
+        showTab("home");
+      }).catch(() => {
+        document.getElementById('login-error').classList.remove('hidden');
+      });
+    }
+
+    function loadMovies() {
+      fetch(`${API}/movies`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         }
-      } catch (err) {
-        document.getElementById('registerMessage').textContent = "⚠️ Error occurred"
-      }
+      })
+        .then(res => res.json())
+        .then(data => {
+          const grid = document.getElementById("movie-grid");
+          grid.innerHTML = "";
+          data.forEach(movie => {
+            grid.innerHTML += `
+              <div class="bg-white/10 rounded p-2 text-white">
+                <img src="${movie.thumbnail || 'https://via.placeholder.com/300x160'}" class="rounded w-full h-32 object-cover mb-2"/>
+                <h3 class="font-semibold">${movie.title}</h3>
+                <p class="text-xs text-gray-300">${movie.category}</p>
+              </div>`;
+          });
+        });
     }
-
-    async function login() {
-      const email = document.getElementById('login_email').value
-      const password = document.getElementById('login_password').value
-
-      try {
-        const res = await fetch(`${API}/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        })
-        const data = await res.json()
-        if (res.ok) {
-          localStorage.setItem("token", data.token)
-          document.getElementById('loginMessage').textContent = "✅ Login successful!"
-          showSection('home')
-          loadMovies()
-        } else {
-          document.getElementById('loginMessage').textContent = data.message || "Login failed."
-        }
-      } catch (err) {
-        document.getElementById('loginMessage').textContent = "⚠️ Login error"
-      }
-    }
-
-    async function loadMovies() {
-      try {
-        const res = await fetch(`${API}/movies`)
-        const movies = await res.json()
-        const grid = document.getElementById('movieGrid')
-        grid.innerHTML = ''
-        movies.forEach(m => {
-          grid.innerHTML += `
-            <div class="bg-white/10 rounded p-2">
-              <img src="${m.thumbnail || 'https://via.placeholder.com/300x160'}" class="rounded w-full h-32 object-cover" />
-              <h3 class="mt-2 text-sm font-semibold">${m.title}</h3>
-              <p class="text-xs text-gray-400">${m.category}</p>
-            </div>
-          `
-        })
-      } catch (err) {
-        document.getElementById('movieGrid').innerHTML = "<p>⚠️ Failed to load movies.</p>"
-      }
-    }
-
-    // Basic styles
-    const style = document.createElement('style')
-    style.innerHTML = `
-      .input {
-        width: 100%;
-        padding: 0.6rem;
-        margin-bottom: 0.6rem;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 0.5rem;
-        color: white;
-      }
-      .btn {
-        background: #06b6d4;
-        padding: 0.6rem;
-        border-radius: 0.5rem;
-        font-weight: bold;
-        transition: all 0.3s;
-      }
-      .btn:hover {
-        background: #0891b2;
-      }
-    `
-    document.head.appendChild(style)
   </script>
 </body>
 </html>
