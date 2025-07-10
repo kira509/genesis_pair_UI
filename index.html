@@ -1,26 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- Updated Genesis Pair UI repurposed for MovieFlix registration --><!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MovieFlix Portal</title>
-
-  <!-- Tailwind CSS -->
+  <title>MovieFlix Register</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="style.css" rel="stylesheet" />
-
-  <!-- Orbitron Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: url('https://images.unsplash.com/photo-1604948501466-6c3cd8de0a2b?auto=format&fit=crop&w=1950&q=80') no-repeat center/cover;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .glass {
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 10px #00ffff;
+    }
+  </style>
 </head>
-<body class="bg-cover bg-center text-white">
-  <nav class="glass flex justify-center gap-6 p-4 mb-8 text-cyan-400 text-lg font-semibold">
-    <button onclick="navigateTo('home')">Home</button>
-    <button onclick="navigateTo('login')">Login</button>
-    <button onclick="navigateTo('register')">Register</button>
-  </nav>
+<body>
+  <div class="glass rounded-2xl p-8 w-[90%] max-w-md text-white">
+    <h1 class="text-3xl font-bold text-cyan-400 mb-6 text-center drop-shadow">Register for MovieFlix</h1><input id="username" type="text" placeholder="Username"
+  class="w-full bg-white/10 text-white text-center py-3 px-4 rounded-lg mb-4" />
 
-  <main id="app" class="w-full max-w-3xl mx-auto px-4"></main>
+<input id="email" type="email" placeholder="Email"
+  class="w-full bg-white/10 text-white text-center py-3 px-4 rounded-lg mb-4" />
 
-  <script src="app.js"></script>
-</body>
+<input id="password" type="password" placeholder="Password"
+  class="w-full bg-white/10 text-white text-center py-3 px-4 rounded-lg mb-6" />
+
+<button id="registerBtn"
+  class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2">
+  <span>Register</span>
+  <i data-feather="user-plus"></i>
+</button>
+
+<p id="statusMsg" class="mt-4 text-center text-sm"></p>
+
+  </div>  <script>
+    feather.replace();
+
+    const registerBtn = document.getElementById("registerBtn");
+    const statusMsg = document.getElementById("statusMsg");
+
+    registerBtn.addEventListener("click", async () => {
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !email || !password) {
+        statusMsg.textContent = "All fields are required.";
+        statusMsg.className = "text-red-400 mt-4 text-center text-sm";
+        return;
+      }
+
+      registerBtn.disabled = true;
+      registerBtn.innerHTML = '<svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" class="opacity-25"></circle><path d="M4 12a8 8 0 018-8v4l3-3-3-3v4A8 8 0 104 12z" stroke-width="4" class="opacity-75"></path></svg>';
+
+      try {
+        const res = await fetch("https://movieflix-backend-ikbt.onrender.com/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, email, password })
+        });
+
+        if (!res.ok) throw new Error("Registration failed");
+
+        statusMsg.textContent = "Registration successful! You can now log in.";
+        statusMsg.className = "text-green-400 mt-4 text-center text-sm";
+      } catch (err) {
+        statusMsg.textContent = err.message;
+        statusMsg.className = "text-red-400 mt-4 text-center text-sm";
+      } finally {
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<span>Register</span><i data-feather="user-plus"></i>';
+        feather.replace();
+      }
+    });
+  </script></body>
 </html>
