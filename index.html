@@ -108,23 +108,28 @@
       const password = document.getElementById("log-password").value;
 
       fetch(`${API}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          document.getElementById("log-msg").textContent = "✅ Logged in!";
-          showSection("upload");
-        } else {
-          throw new Error("Login failed");
-        }
-      })
-      .catch(() => {
-        document.getElementById("log-msg").textContent = "❌ Login failed. Check credentials.";
-      });
+      function login() {
+  const email = document.getElementById("log-email").value;
+  const password = document.getElementById("log-password").value;
+
+  fetch(`${API}/auth/login`, {  // <- FIXED HERE
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      document.getElementById("log-msg").textContent = "✅ Logged in!";
+      showSection("upload");
+    } else {
+      throw new Error("Login failed");
+    }
+  })
+  .catch(() => {
+    document.getElementById("log-msg").textContent = "❌ Login failed. Check credentials.";
+  });
     }
 
     function uploadMovie() {
